@@ -12,5 +12,3 @@
 ![image](https://github.com/user-attachments/assets/b8f03d9d-b1d8-4978-85ed-29ab5e75b307)
 
 ## GITHUB IO
-
-https://gayubrw.github.io/WebGL-Asbak/
