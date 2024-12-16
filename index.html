@@ -1,237 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Asbak 3D GLB Loader - Enhanced Scene</title>
-    <style>
-      body {
-        margin: 0;
-      }
-      #loading {
-        position: fixed;
-        top: 50%;
-        width: 100%;
-        text-align: center;
-        color: white;
-        font-family: Arial;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 10px;
-      }
-      #info {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        color: white;
-        font-family: Arial, sans-serif;
-        background: rgba(0, 0, 0, 0.7);
-        padding: 15px;
-        border-radius: 8px;
-        font-size: 16px;
-        line-height: 1.5;
-      }
-    </style>
+    <title>WebGL Octagonal Ashtray - Full 3D Control</title>
+    <link rel="stylesheet" href="css/styles.css" />
   </head>
   <body>
-    <div id="loading">Loading Model: 0%</div>
     <div id="info">
       <strong>Nama:</strong> Gayu Baruwa<br />
       <strong>NRP:</strong> 5025221247
     </div>
+    <div id="instructions">
+      <strong>Controls:</strong><br />
+      • Drag: Rotate in any direction<br />
+      • Scroll: Zoom in/out<br />
+      • Double click: Reset view
+    </div>
+    <canvas id="glCanvas"></canvas>
 
-    <script
-      async
-      src="https://unpkg.com/es-module-shims@1.8.0/dist/es-module-shims.js"
-    ></script>
-    <script type="importmap">
-      {
-        "imports": {
-          "three": "https://unpkg.com/three@0.159.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.159.0/examples/jsm/"
-        }
-      }
-    </script>
-
-    <script type="module">
-      import * as THREE from "three";
-      import { OrbitControls } from "three/addons/controls/OrbitControls.js";
-      import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-
-      const scene = new THREE.Scene();
-
-      // Create a gradient background
-      const vertexShader = `
-        varying vec2 vUv;
-        void main() {
-          vUv = uv;
-          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-        }
-      `;
-
-      const fragmentShader = `
-        varying vec2 vUv;
-        void main() {
-          vec3 bottomColor = vec3(0.1, 0.12, 0.2);
-          vec3 topColor = vec3(0.3, 0.4, 0.5);
-          vec3 color = mix(bottomColor, topColor, vUv.y);
-          gl_FragColor = vec4(color, 1.0);
-        }
-      `;
-
-      const uniforms = {
-        time: { value: 0 },
-      };
-
-      const bgGeometry = new THREE.PlaneGeometry(2, 2);
-      const bgMaterial = new THREE.ShaderMaterial({
-        vertexShader,
-        fragmentShader,
-        uniforms,
-      });
-
-      const background = new THREE.Mesh(bgGeometry, bgMaterial);
-      background.position.z = -1;
-      const bgCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, -1, 1);
-      const bgScene = new THREE.Scene();
-      bgScene.add(background);
-
-      const camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      camera.position.set(0, 1, 2);
-
-      const renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-
-      // Enhanced lighting setup
-      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-      scene.add(ambientLight);
-
-      const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-      directionalLight.position.set(1, 2, 3);
-      scene.add(directionalLight);
-
-      // Add point lights for dramatic effect
-      const pointLight1 = new THREE.PointLight(0xff9999, 1, 10);
-      pointLight1.position.set(2, 2, 2);
-      scene.add(pointLight1);
-
-      const pointLight2 = new THREE.PointLight(0x9999ff, 1, 10);
-      pointLight2.position.set(-2, -2, -2);
-      scene.add(pointLight2);
-
-      // Add some particles in the background
-      const particlesGeometry = new THREE.BufferGeometry();
-      const particlesCount = 1000;
-      const posArray = new Float32Array(particlesCount * 3);
-
-      for (let i = 0; i < particlesCount * 3; i++) {
-        posArray[i] = (Math.random() - 0.5) * 10;
-      }
-
-      particlesGeometry.setAttribute(
-        "position",
-        new THREE.BufferAttribute(posArray, 3)
-      );
-      const particlesMaterial = new THREE.PointsMaterial({
-        size: 0.005,
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.5,
-      });
-
-      const particlesMesh = new THREE.Points(
-        particlesGeometry,
-        particlesMaterial
-      );
-      scene.add(particlesMesh);
-
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-
-      const hiddenObjects = [
-        "Silinder001",
-        "Torus",
-        "Kubus",
-        "Kubus001",
-        "Kubus002",
-        "Kubus003",
-      ];
-
-      const loader = new GLTFLoader();
-      const loadingEl = document.getElementById("loading");
-
-      loader.load(
-        "asbak.glb",
-        function (gltf) {
-          const model = gltf.scene;
-
-          model.traverse((node) => {
-            if (node.isMesh && hiddenObjects.includes(node.name)) {
-              console.log("Hiding object:", node.name);
-              node.visible = false;
-            }
-          });
-
-          scene.add(model);
-
-          const box = new THREE.Box3().setFromObject(model);
-          const center = box.getCenter(new THREE.Vector3());
-          model.position.sub(center);
-
-          const size = box.getSize(new THREE.Vector3());
-          const maxDim = Math.max(size.x, size.y, size.z);
-          const fov = camera.fov * (Math.PI / 180);
-          let cameraZ = Math.abs(maxDim / Math.tan(fov / 2)) * 1.5;
-          camera.position.set(cameraZ * 0.5, cameraZ * 0.5, cameraZ);
-          camera.lookAt(center);
-
-          loadingEl.style.display = "none";
-          animate();
-        },
-        function (xhr) {
-          if (xhr.lengthComputable) {
-            const percent = (xhr.loaded / xhr.total) * 100;
-            loadingEl.textContent = `Loading Model: ${Math.round(percent)}%`;
-          }
-        },
-        function (error) {
-          loadingEl.textContent = "Error loading model!";
-          console.error(error);
-        }
-      );
-
-      function animate() {
-        requestAnimationFrame(animate);
-
-        // Animate particles
-        particlesMesh.rotation.y += 0.0005;
-
-        // Animate point lights
-        const time = Date.now() * 0.001;
-        pointLight1.position.x = Math.sin(time) * 3;
-        pointLight1.position.z = Math.cos(time) * 3;
-        pointLight2.position.x = Math.sin(time + Math.PI) * 3;
-        pointLight2.position.z = Math.cos(time + Math.PI) * 3;
-
-        controls.update();
-
-        // Render background
-        renderer.autoClear = false;
-        renderer.clear();
-        renderer.render(bgScene, bgCamera);
-
-        // Render main scene
-        renderer.render(scene, camera);
-      }
-
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      });
-    </script>
+    <script src="js/matrix.js"></script>
+    <script src="js/shaders.js"></script>
+    <script src="js/buffers.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/webgl.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>

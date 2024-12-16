@@ -1,0 +1,49 @@
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+canvas {
+  display: block;
+}
+
+#info {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+#instructions {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+button {
+  margin: 0 5px;
+  padding: 8px 15px;
+  cursor: pointer;
+  background: #4caf50;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-size: 14px;
+}
+
+button:hover {
+  background: #45a049;
+}
