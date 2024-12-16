@@ -9,8 +9,6 @@
 
 ## index.html
 
-![image](https://github.com/user-attachments/assets/b8f03d9d-b1d8-4978-85ed-29ab5e75b307)
+![image](https://github.com/user-attachments/assets/a4dda639-1c80-44e5-bf6e-5bf1c1f8bb8e)
 
 ## GITHUB IO
-
-https://gayubrw.github.io/WebGL-Asbak/
