@@ -65,7 +65,7 @@ Mengimplementasikan model pencahayaan dasar dengan:
 ## Cara Menjalankan
 1. Clone repository:
 ```bash
-git clone [url-repository]
+git clone https://github.com/gayubrw/WebGL-Asbak.git
 ```
 
 2. Buka proyek:
